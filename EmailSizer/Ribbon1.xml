@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab idMso="TabMail">
+        <group id="EmailSizer"
+               label="Quota Usage">
+          <button id="QuotaIconButton"
+                  size="large"
+                  getLabel="get_LabelName"
+                  getImage="showthebox"
+                  onAction="clickthebutton"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
+

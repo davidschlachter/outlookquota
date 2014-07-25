@@ -1,0 +1,17 @@
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\EmailSizer.dll
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\EmailSizer.pdb
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\EmailSizer.xml
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\EmailSizer.dll.manifest
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\EmailSizer.vsto
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\Microsoft.Office.Tools.Common.v4.0.Utilities.xml
+C:\Users\David\Desktop\EmailSizer\EmailSizer\bin\Release\Microsoft.Office.Tools.Outlook.v4.0.Utilities.xml
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\ResolveAssemblyReference.cache
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\EmailSizer.Resources.resources
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\EmailSizer.Resource1.resources
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\GenerateResource.read.1.tlog
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\GenerateResource.write.1.tlog
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\EmailSizer.dll
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\EmailSizer.xml
+C:\Users\David\Desktop\EmailSizer\EmailSizer\obj\Release\EmailSizer.pdb
