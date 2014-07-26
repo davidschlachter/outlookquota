@@ -145,7 +145,7 @@
     <ManifestKeyFile>EmailSizer_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>E269C4126814C630AC706B80E48CED264B9378E3</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>3E2F9984618D0497A30F8FB8CD0D64317FBC7BF1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!--
     This section specifies references for the project.
