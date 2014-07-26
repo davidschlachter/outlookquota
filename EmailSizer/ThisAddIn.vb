@@ -222,6 +222,8 @@ Public Class ThisAddIn
         areWeRunning = 0
         'Run the sizer
         folsize()
+        'Remove the lock
+        areWeRunning = 0
     End Sub
 
     'Update the counts when new mail arrives
@@ -229,6 +231,7 @@ Public Class ThisAddIn
         If areWeRunning = 0 Then
             folsize()
             ribbon.Invalidate()
+            areWeRunning = 0
         End If
     End Sub
 
@@ -245,6 +248,7 @@ Public Class ThisAddIn
                         folsize()
                         FirstIDDelItems = delitms.Items.Item(1).EntryID
                         ribbon.Invalidate()
+                        areWeRunning = 0
                     End If
                 Else
                     Exit Sub
@@ -256,6 +260,7 @@ Public Class ThisAddIn
                     FirstIDDelItems = delitms.Items.Item(1).EntryID
                 End If
                 ribbon.Invalidate()
+                areWeRunning = 0
             End If
         End If
     End Sub
