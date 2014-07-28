@@ -62,12 +62,13 @@ Public Class ThisAddIn
             'Let go of the lock
             areWeRunning = False
 
-        Catch
+        Catch e As System.Exception
             'On error...
             areWeRunning = False
             'DEBUG code
+            MsgBox(e.ToString)
+        Finally
             MsgBox("The error was in the main routine")
-            Exit Sub
         End Try
     End Sub
 
@@ -211,10 +212,11 @@ Public Class ThisAddIn
                     b = 0
                 End If
             End If
-        Catch
+        Catch e As System.Exception
             'DEBUG code
+            MsgBox(e.ToString)
+        Finally
             MsgBox("The error was in the subroutine")
-            Exit Sub
         End Try
 
     End Sub
@@ -234,8 +236,10 @@ Public Class ThisAddIn
             folsize()
             'Remove the lock
             areWeRunning = False
-        Catch
+        Catch e As System.Exception
             'DEBUG code
+            MsgBox(e.ToString)
+        Finally
             MsgBox("The error was in the startup event handler")
             areWeRunning = False
         End Try
@@ -249,8 +253,10 @@ Public Class ThisAddIn
                 ribbon.Invalidate()
                 areWeRunning = False
             End If
-        Catch
+        Catch e As System.Exception
             'DEBUG code
+            MsgBox(e.ToString)
+        Finally
             MsgBox("The error was in the new mail event handler")
         End Try
     End Sub
@@ -284,8 +290,10 @@ Public Class ThisAddIn
                     areWeRunning = False
                 End If
             End If
-        Catch
+        Catch e As System.Exception
             'DEBUG code
+            MsgBox(e.ToString)
+        Finally
             MsgBox("The error was in the load item handler")
         End Try
     End Sub
