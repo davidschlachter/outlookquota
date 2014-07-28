@@ -129,6 +129,7 @@ Public Class ThisAddIn
                 b = 0
                 For Each m In fol.Items
                     b = b + m.size
+                    m.Close()
                 Next
                 s = s + b
                 Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -153,6 +154,7 @@ Public Class ThisAddIn
                         b = 0
                         For Each m In fol.Items
                             b = b + m.size
+                            m.Close()
                         Next
                         s = s + b
                         Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -172,6 +174,7 @@ Public Class ThisAddIn
                                 b = 0
                                 For Each m In fol.Items
                                     b = b + m.size
+                                    m.Close()
                                 Next
                                 s = s + b
                                 Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -196,6 +199,7 @@ Public Class ThisAddIn
                             b = 0
                             For Each m In fol.Items
                                 b = b + m.size
+                                m.Close()
                             Next
                             s = s + b
                             Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -217,6 +221,7 @@ Public Class ThisAddIn
                     b = 0
                     For Each m In fol.Items
                         b = b + m.size
+                        m.Close()
                     Next
                     s = s + b
                     Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
