@@ -67,7 +67,6 @@ Public Class ThisAddIn
             areWeRunning = False
             'DEBUG code
             MsgBox(e.ToString)
-        Finally
             MsgBox("The error was in the main routine")
         End Try
     End Sub
@@ -80,6 +79,9 @@ Public Class ThisAddIn
         Try
             Dim f As Object, count As Integer, firstItem As String, size As Long, b As Long
 
+            'Make sure that the variable is set!
+            areWeRunning = True
+
             ' Check for any more subfolders
             For Each f In fol.Folders
                 itmsiz(f)
@@ -88,17 +90,28 @@ Public Class ThisAddIn
             ' Actually calculate the sizes
             ' First, check if we have an ID-based folder, if not, make it
             Dim ItemFolder As String = RootPath & "\" & fol.EntryID
-            If Dir(ItemFolder, vbDirectory) = "" Then
-                MkDir(ItemFolder)
-            End If
+            Try
+                If Dir(ItemFolder, vbDirectory) = "" Then
+                    MkDir(ItemFolder)
+                End If
+            Catch e As System.Exception
+                'DEBUG code
+                MsgBox("The error was in creating the ID folder for the subroutine.")
+            End Try
+
 
             ' Quick error prevention check -- if the current count is zero, get rid of the cache
-            If fol.Items.count = 0 Then
-                If Not Dir(ItemFolder & "\Count", vbDirectory) = "" Then
-                    SetAttr(ItemFolder & "\Count", vbNormal)
-                    Kill(ItemFolder & "\Count")
+            Try
+                If fol.Items.count = 0 Then
+                    If Not Dir(ItemFolder & "\Count", vbDirectory) = "" Then
+                        SetAttr(ItemFolder & "\Count", vbNormal)
+                        Kill(ItemFolder & "\Count")
+                    End If
                 End If
-            End If
+            Catch e As System.Exception
+                'DEBUG
+                MsgBox("The error was in removing an empty count in the subroutine.")
+            End Try
 
             ' Do we have an item count in the folder? Does it match?
             If Dir(ItemFolder & "\Count", vbDirectory) = "" Then
@@ -215,7 +228,6 @@ Public Class ThisAddIn
         Catch e As System.Exception
             'DEBUG code
             MsgBox(e.ToString)
-        Finally
             MsgBox("The error was in the subroutine")
         End Try
 
@@ -239,7 +251,6 @@ Public Class ThisAddIn
         Catch e As System.Exception
             'DEBUG code
             MsgBox(e.ToString)
-        Finally
             MsgBox("The error was in the startup event handler")
             areWeRunning = False
         End Try
@@ -252,11 +263,12 @@ Public Class ThisAddIn
                 folsize()
                 ribbon.Invalidate()
                 areWeRunning = False
+            Else
+                Exit Sub
             End If
         Catch e As System.Exception
             'DEBUG code
             MsgBox(e.ToString)
-        Finally
             MsgBox("The error was in the new mail event handler")
         End Try
     End Sub
@@ -289,11 +301,12 @@ Public Class ThisAddIn
                     ribbon.Invalidate()
                     areWeRunning = False
                 End If
+            Else
+                Exit Sub
             End If
         Catch e As System.Exception
             'DEBUG code
             MsgBox(e.ToString)
-        Finally
             MsgBox("The error was in the load item handler")
         End Try
     End Sub
