@@ -129,7 +129,8 @@ Public Class ThisAddIn
                 b = 0
                 For Each m In fol.Items
                     b = b + m.size
-                    m.Close()
+                    ' If all is well, this will prevent that 'too-many items open' error
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                 Next
                 s = s + b
                 Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -154,7 +155,8 @@ Public Class ThisAddIn
                         b = 0
                         For Each m In fol.Items
                             b = b + m.size
-                            m.Close()
+                            ' If all is well, this will prevent that 'too-many items open' error
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                         Next
                         s = s + b
                         Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -174,7 +176,8 @@ Public Class ThisAddIn
                                 b = 0
                                 For Each m In fol.Items
                                     b = b + m.size
-                                    m.Close()
+                                    ' If all is well, this will prevent that 'too-many items open' error
+                                    System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                                 Next
                                 s = s + b
                                 Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -199,7 +202,8 @@ Public Class ThisAddIn
                             b = 0
                             For Each m In fol.Items
                                 b = b + m.size
-                                m.Close()
+                                ' If all is well, this will prevent that 'too-many items open' error
+                                System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                             Next
                             s = s + b
                             Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -221,7 +225,8 @@ Public Class ThisAddIn
                     b = 0
                     For Each m In fol.Items
                         b = b + m.size
-                        m.Close()
+                        ' If all is well, this will prevent that 'too-many items open' error
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                     Next
                     s = s + b
                     Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
@@ -303,7 +308,10 @@ Public Class ThisAddIn
                     If delitms.Items.Count <> 0 Then
                         FirstIDDelItems = delitms.Items.Item(1).EntryID
                     End If
-                    ribbon.Invalidate()
+                    Try
+                        ribbon.Invalidate()
+                    Catch e As System.Exception
+                    End Try
                     areWeRunning = False
                 End If
             Else
