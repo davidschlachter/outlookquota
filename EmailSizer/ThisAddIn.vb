@@ -14,6 +14,7 @@ Public Class ThisAddIn
     Public Shared Quota As Double = 2000000000
     Public Shared NumberUsage As Integer
     Public Shared PercentageQuota As Integer
+    Public Shared RawSize As Long
     'For evaluating the contents of 'Deleted Items'
     Public Shared FirstIDDelItems As String
     Public Shared NumDelItems As Integer
@@ -71,6 +72,7 @@ Public Class ThisAddIn
             'Compute the results
             NumberUsage = (a + s) / 1000000.0#
             PercentageQuota = ((a + s) / Quota) * 100
+            RawSize = (a + s)
             a = 0
             s = 0
 

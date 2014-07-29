@@ -33,7 +33,7 @@ Public Class Ribbon1
 
     'This dynamically updates the button text (and sets a condition for if we haven't sized yet)
     Public Function get_LabelName(ByVal control As Office.IRibbonControl) As String
-        If Dir(ThisAddIn.RootPath, vbDirectory) = "" Then
+        If ThisAddIn.RawSize = 0 Then
             Return "Click me to update!"
         Else
             Return ThisAddIn.PercentageQuota & " Percent Used"
@@ -58,7 +58,7 @@ Public Class Ribbon1
     Public Sub clickthebutton(ByVal control As Office.IRibbonControl)
         ribbon.InvalidateControl("QuotaIconButton")
         MsgBox("Total usage is " & ThisAddIn.NumberUsage & " out of " & ThisAddIn.Quota / 1000000 & " MB, or " & ThisAddIn.PercentageQuota & " %." _
-               & vbNewLine & "(Be sure to empty your Deleted Items Folder) ")
+               & vbNewLine & vbNewLine & "(To update this number, close and reopen Outlook. Don't forget to to empty your Deleted Items folder.)")
     End Sub
 
 #End Region
