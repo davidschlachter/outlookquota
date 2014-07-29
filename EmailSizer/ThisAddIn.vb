@@ -45,8 +45,22 @@ Public Class ThisAddIn
             Dim b As Long = 0
 
             ' Check for any items at the root (unlikely)
+
             For Each m In inb.Items
-                a = a + m.Size
+                Try
+                    a = a + m.Size
+                Catch e As System.Exception
+                    Try
+                        Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                            errorwriter.WriteLine(e.ToString)
+                            errorwriter.Close()
+                        End Using
+                    Catch exc As System.Exception
+                        MsgBox("Unable to write error log: " & exc.ToString)
+                    End Try
+                Finally
+                    Marshal.ReleaseComObject(m)
+                End Try
             Next
 
             ' Now, loop through all the folders
@@ -66,9 +80,10 @@ Public Class ThisAddIn
         Catch e As System.Exception
             'On error...
             areWeRunning = False
-            'DEBUG code
-            MsgBox(e.ToString)
-            MsgBox("The error was in the main routine")
+            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                errorwriter.WriteLine(e.ToString)
+                errorwriter.Close()
+            End Using
         End Try
     End Sub
 
@@ -96,8 +111,10 @@ Public Class ThisAddIn
                     MkDir(ItemFolder)
                 End If
             Catch e As System.Exception
-                'DEBUG code
-                MsgBox("The error was in creating the ID folder for the subroutine.")
+                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                    errorwriter.WriteLine(e.ToString)
+                    errorwriter.Close()
+                End Using
             End Try
 
 
@@ -110,45 +127,47 @@ Public Class ThisAddIn
                     End If
                 End If
             Catch e As System.Exception
-                'DEBUG
-                MsgBox("The error was in removing an empty count in the subroutine.")
+                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                    errorwriter.WriteLine(e.ToString)
+                    errorwriter.Close()
+                End Using
             End Try
 
             ' Do we have an item count in the folder? Does it match?
             If Dir(ItemFolder & "\Count", vbDirectory) = "" Then
                 'No count found -- creating it
-                Dim countwriter As New System.IO.StreamWriter(ItemFolder & "\Count")
+                Dim countwriter As New StreamWriter(ItemFolder & "\Count")
                 countwriter.Write(fol.Items.count)
                 countwriter.Close()
                 ' Also creating the first item ID
                 If fol.Items.count > 0 Then
-                    Dim idwriter As New System.IO.StreamWriter(ItemFolder & "\firstItem")
+                    Dim idwriter As New StreamWriter(ItemFolder & "\firstItem")
                     idwriter.Write(fol.Items.Item(1).EntryID)
                     idwriter.Close()
                 End If
                 ' Then, crunch the numbers -- there was no cache
                 b = 0
 
-                'Try a new method to crunch numbers, based on bit.ly/1lSzAbR
-                'Const PR_MESSAGE_SIZE As String = "http://schemas.microsoft.com/mapi/proptag/0x0E08"
-                'Dim filter As String = ""
-                'Dim foltable As Outlook.Table = fol.GetTable(filter, Outlook.OlTableContents.olUserItems)
-                'foltable.Columns.RemoveAll()
-                'foltable.Columns.Add("urn:schemas:httpmail:messagesize")
-                'While Not (foltable.EndOfTable)
-                'Dim tablerow As Outlook.Row = foltable.GetNextRow()
-                'MsgBox(tablerow("Size").ToString)
-                'MsgBox("Going")
-                'End While
-
                 For Each m In fol.Items
-                    b = b + m.size
-                    '     If all is well, this will prevent that 'too-many items open' error
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
+                    Try
+                        b = b + m.size
+                    Catch e As System.Exception
+                        Try
+                            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                errorwriter.WriteLine(e.ToString)
+                                errorwriter.Close()
+                            End Using
+                        Catch exc As System.Exception
+                            MsgBox("Unable to write error log: " & exc.ToString)
+                        End Try
+                    Finally
+                        Marshal.ReleaseComObject(m)
+                    End Try
                 Next
+
                 s = s + b
 
-                Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
+                Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
                 sizewriter.Write(b)
                 sizewriter.Close()
                 b = 0
@@ -162,19 +181,30 @@ Public Class ThisAddIn
                     If Dir(ItemFolder & "\firstItem", vbDirectory) = "" Then
                         ' If there was no firstItem ID, create it, then crunch numbers
                         If fol.Items.count > 0 Then
-                            Dim firstwriter As New System.IO.StreamWriter(ItemFolder & "\firstItem")
+                            Dim firstwriter As New StreamWriter(ItemFolder & "\firstItem")
                             firstwriter.Write(fol.Items.Item(1).EntryID)
                             firstwriter.Close()
                         End If
                         ' Then, crunch the numbers -- there was no cache
                         b = 0
                         For Each m In fol.Items
-                            b = b + m.size
-                            ' If all is well, this will prevent that 'too-many items open' error
-                            System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
+                            Try
+                                b = b + m.size
+                            Catch e As System.Exception
+                                Try
+                                    Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                        errorwriter.WriteLine(e.ToString)
+                                        errorwriter.Close()
+                                    End Using
+                                Catch exc As System.Exception
+                                    MsgBox("Unable to write error log: " & exc.ToString)
+                                End Try
+                            Finally
+                                Marshal.ReleaseComObject(m)
+                            End Try
                         Next
                         s = s + b
-                        Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
+                        Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
                         sizewriter.Write(b)
                         sizewriter.Close()
                         b = 0
@@ -190,12 +220,23 @@ Public Class ThisAddIn
                                 'No file; crunch numbers, make size file
                                 b = 0
                                 For Each m In fol.Items
-                                    b = b + m.size
-                                    ' If all is well, this will prevent that 'too-many items open' error
-                                    System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
+                                    Try
+                                        b = b + m.size
+                                    Catch e As System.Exception
+                                        Try
+                                            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                                errorwriter.WriteLine(e.ToString)
+                                                errorwriter.Close()
+                                            End Using
+                                        Catch exc As System.Exception
+                                            MsgBox("Unable to write error log: " & exc.ToString)
+                                        End Try
+                                    Finally
+                                        Marshal.ReleaseComObject(m)
+                                    End Try
                                 Next
                                 s = s + b
-                                Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
+                                Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
                                 sizewriter.Write(b)
                                 sizewriter.Close()
                                 b = 0
@@ -209,19 +250,30 @@ Public Class ThisAddIn
                         Else
                             'The folder has changed. Time to get a new first item ID, then calculate!
                             If fol.Items.count > 0 Then
-                                Dim firstwriter As New System.IO.StreamWriter(ItemFolder & "\firstItem")
+                                Dim firstwriter As New StreamWriter(ItemFolder & "\firstItem")
                                 firstwriter.Write(fol.Items.Item(1).EntryID)
                                 firstwriter.Close()
                             End If
                             ' Then, crunch the numbers -- there was no cache
                             b = 0
                             For Each m In fol.Items
-                                b = b + m.size
-                                ' If all is well, this will prevent that 'too-many items open' error
-                                System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
+                                Try
+                                    b = b + m.size
+                                Catch e As System.Exception
+                                    Try
+                                        Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                            errorwriter.WriteLine(e.ToString)
+                                            errorwriter.Close()
+                                        End Using
+                                    Catch exc As System.Exception
+                                        MsgBox("Unable to write error log: " & exc.ToString)
+                                    End Try
+                                Finally
+                                    Marshal.ReleaseComObject(m)
+                                End Try
                             Next
                             s = s + b
-                            Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
+                            Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
                             sizewriter.Write(b)
                             sizewriter.Close()
                             b = 0
@@ -229,31 +281,43 @@ Public Class ThisAddIn
                     End If
                 Else
                     ' They're different, so we'll just write the new count (and first item ID) and tally up the sizes
-                    Dim countwriter As New System.IO.StreamWriter(ItemFolder & "\Count")
+                    Dim countwriter As New StreamWriter(ItemFolder & "\Count")
                     countwriter.Write(fol.Items.count)
                     countwriter.Close()
                     If fol.Items.count > 0 Then
-                        Dim firstwriter As New System.IO.StreamWriter(ItemFolder & "\firstItem")
+                        Dim firstwriter As New StreamWriter(ItemFolder & "\firstItem")
                         firstwriter.Write(fol.Items.Item(1).EntryID)
                         firstwriter.Close()
                     End If
                     b = 0
                     For Each m In fol.Items
-                        b = b + m.size
-                        ' If all is well, this will prevent that 'too-many items open' error
-                        System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
+                        Try
+                            b = b + m.size
+                        Catch e As System.Exception
+                            Try
+                                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                    errorwriter.WriteLine(e.ToString)
+                                    errorwriter.Close()
+                                End Using
+                            Catch exc As System.Exception
+                                MsgBox("Unable to write error log: " & exc.ToString)
+                            End Try
+                        Finally
+                            Marshal.ReleaseComObject(m)
+                        End Try
                     Next
                     s = s + b
-                    Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
+                    Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
                     sizewriter.Write(b)
                     sizewriter.Close()
                     b = 0
                 End If
             End If
         Catch e As System.Exception
-            'DEBUG code
-            MsgBox(e.ToString)
-            MsgBox("The error was in the subroutine")
+            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                errorwriter.WriteLine(e.ToString)
+                errorwriter.Close()
+            End Using
         End Try
 
     End Sub
