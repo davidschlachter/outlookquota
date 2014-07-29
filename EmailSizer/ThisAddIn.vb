@@ -35,7 +35,7 @@ Public Class ThisAddIn
             ' Check if the cache directory exists
             If Dir(RootPath, vbDirectory) = "" Then
                 MkDir(RootPath)
-                MsgBox("We'll be calculating the size of your inbox for the first time. This may take some time. Please be patient  :)")
+                MsgBox("We'll be calculating the size of your inbox for the first time. This may take a few minutes.")
             End If
 
             ' Zero the size variables (just in case  :)
