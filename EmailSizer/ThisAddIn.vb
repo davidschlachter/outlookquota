@@ -2,6 +2,7 @@
 Imports Microsoft.Office.Interop.Outlook
 Imports Microsoft.Office.Tools.Outlook
 Imports Microsoft.Office.Core
+Imports System.Runtime.InteropServices
 
 Public Class ThisAddIn
     ' Set the file-size counters globally so that they don't reset!
@@ -127,12 +128,26 @@ Public Class ThisAddIn
                 End If
                 ' Then, crunch the numbers -- there was no cache
                 b = 0
+
+                'Try a new method to crunch numbers, based on bit.ly/1lSzAbR
+                'Const PR_MESSAGE_SIZE As String = "http://schemas.microsoft.com/mapi/proptag/0x0E08"
+                'Dim filter As String = ""
+                'Dim foltable As Outlook.Table = fol.GetTable(filter, Outlook.OlTableContents.olUserItems)
+                'foltable.Columns.RemoveAll()
+                'foltable.Columns.Add("urn:schemas:httpmail:messagesize")
+                'While Not (foltable.EndOfTable)
+                'Dim tablerow As Outlook.Row = foltable.GetNextRow()
+                'MsgBox(tablerow("Size").ToString)
+                'MsgBox("Going")
+                'End While
+
                 For Each m In fol.Items
                     b = b + m.size
-                    ' If all is well, this will prevent that 'too-many items open' error
+                    '     If all is well, this will prevent that 'too-many items open' error
                     System.Runtime.InteropServices.Marshal.ReleaseComObject(m)
                 Next
                 s = s + b
+
                 Dim sizewriter As New System.IO.StreamWriter(ItemFolder & "\Size")
                 sizewriter.Write(b)
                 sizewriter.Close()
@@ -267,62 +282,62 @@ Public Class ThisAddIn
     End Sub
 
     'Update the counts when new mail arrives
-    Private Sub OutLook_NewMaiItem() Handles Application.NewMail
-        Try
-            If Not areWeRunning Then
-                folsize()
-                ribbon.Invalidate()
-                areWeRunning = False
-            Else
-                Exit Sub
-            End If
-        Catch e As System.Exception
-            'DEBUG code
-            MsgBox(e.ToString)
-            MsgBox("The error was in the new mail event handler")
-        End Try
-    End Sub
+    'Private Sub OutLook_NewMaiItem() Handles Application.NewMail
+    '    Try
+    '        If Not areWeRunning Then
+    '            folsize()
+    '            ribbon.Invalidate()
+    '            areWeRunning = False
+    '        Else
+    '            Exit Sub
+    '        End If
+    '    Catch e As System.Exception
+    '        'DEBUG code
+    '        MsgBox(e.ToString)
+    '        MsgBox("The error was in the new mail event handler")
+    '    End Try
+    'End Sub
 
     'And, detect when users empty Deleted Items, and also update
-    Private Sub OutLook_ItemLoad() Handles Application.ItemLoad
-        Try
-            Dim delitms As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
-            delitms = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDeletedItems)
-            If Not areWeRunning Then
-                If NumDelItems = delitms.Items.Count Then
-                    If delitms.Items.Count <> 0 Then
-                        If FirstIDDelItems = delitms.Items.Item(1).EntryID Then
-                            Exit Sub
-                        Else
-                            folsize()
-                            FirstIDDelItems = delitms.Items.Item(1).EntryID
-                            ribbon.Invalidate()
-                            areWeRunning = False
-                        End If
-                    Else
-                        Exit Sub
-                    End If
-                Else
-                    folsize()
-                    NumDelItems = delitms.Items.Count
-                    If delitms.Items.Count <> 0 Then
-                        FirstIDDelItems = delitms.Items.Item(1).EntryID
-                    End If
-                    Try
-                        ribbon.Invalidate()
-                    Catch e As System.Exception
-                    End Try
-                    areWeRunning = False
-                End If
-            Else
-                Exit Sub
-            End If
-        Catch e As System.Exception
-            'DEBUG code
-            MsgBox(e.ToString)
-            MsgBox("The error was in the load item handler")
-        End Try
-    End Sub
+    'Private Sub OutLook_ItemLoad() Handles Application.ItemLoad
+    '    Try
+    '        Dim delitms As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
+    '        delitms = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDeletedItems)
+    '        If Not areWeRunning Then
+    '            If NumDelItems = delitms.Items.Count Then
+    '                If delitms.Items.Count <> 0 Then
+    '                    If FirstIDDelItems = delitms.Items.Item(1).EntryID Then
+    '                        Exit Sub
+    '                    Else
+    '                        folsize()
+    '                        FirstIDDelItems = delitms.Items.Item(1).EntryID
+    '                        ribbon.Invalidate()
+    '                        areWeRunning = False
+    '                    End If
+    '                Else
+    '                    Exit Sub
+    '                End If
+    '            Else
+    '                folsize()
+    '                NumDelItems = delitms.Items.Count
+    '                If delitms.Items.Count <> 0 Then
+    '                    FirstIDDelItems = delitms.Items.Item(1).EntryID
+    '                End If
+    '                Try
+    '                    ribbon.Invalidate()
+    '                Catch e As System.Exception
+    '                End Try
+    '                areWeRunning = False
+    '            End If
+    '        Else
+    '            Exit Sub
+    '        End If
+    '    Catch e As System.Exception
+    '        'DEBUG code
+    '        MsgBox(e.ToString)
+    '        MsgBox("The error was in the load item handler")
+    '    End Try
+    'End Sub
 
     'Enable the ribbon XML File
     Protected Overrides Function CreateRibbonExtensibilityObject() As Microsoft.Office.Core.IRibbonExtensibility
