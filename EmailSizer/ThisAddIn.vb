@@ -20,6 +20,10 @@ Public Class ThisAddIn
     Public Shared NumDelItems As Integer
     'The 'are-we-running' variable
     Public Shared areWeRunning As Boolean
+    'For the progress bar
+    Public Shared allFolders As Integer
+    Public Shared atFolderCount As Integer
+    Public Shared currentFolder As String
     'The default data path (AppData\EmailSizer)
     Public Shared RootPath As String = Environ("AppData") & "\EmailSizer"
 
@@ -44,6 +48,9 @@ Public Class ThisAddIn
             a = 0
             s = 0
             Dim b As Long = 0
+
+            ' Get the total number of root-level folders
+            allFolders = inb.Folders.Count
 
             ' Check for any items at the root (unlikely)
 
@@ -335,15 +342,86 @@ Public Class ThisAddIn
         Try
             'At start, make sure we don't have the lock
             areWeRunning = False
-            'Run the sizer
-            folsize()
+
+            'Try with progress bar for first run
+            If Dir(RootPath, vbDirectory) = "" Then
+                MkDir(RootPath)
+                Dim oForm As FirstRunProgress
+                oForm = New FirstRunProgress
+
+
+                ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
+                ' Here we're pasting the folsize code, and modifiying it to update the item count while it runs '
+                ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
+                Try
+                    areWeRunning = True
+                    Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
+                    inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
+                    If Dir(RootPath, vbDirectory) = "" Then
+                        MkDir(RootPath)
+                    End If
+                    a = 0
+                    s = 0
+                    Dim b As Long = 0
+                    allFolders = inb.Folders.Count
+                    oForm.Show()
+                    For Each m In inb.Items
+                        Try
+                            atFolderCount = 1
+                            currentFolder = inb.Name
+                            oForm.Refresh()
+                            a = a + m.Size
+                        Catch e As System.Exception
+                            Try
+                                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                    errorwriter.WriteLine(e.ToString)
+                                    errorwriter.Close()
+                                End Using
+                            Catch exc As System.Exception
+                                MsgBox("Unable to write error log: " & exc.ToString)
+                            End Try
+                        Finally
+                            Marshal.ReleaseComObject(m)
+                        End Try
+                    Next
+
+                    For Each f In inb.Folders
+                        currentFolder = f.Name
+                        atFolderCount = atFolderCount + 1
+                        oForm.Refresh()
+                        itmsiz(f)
+                    Next
+
+                    NumberUsage = (a + s) / 1000000.0#
+                    PercentageQuota = ((a + s) / Quota) * 100
+                    RawSize = (a + s)
+                    a = 0
+                    s = 0
+                    areWeRunning = False
+                Catch e As System.Exception
+                    areWeRunning = False
+                    Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                        errorwriter.WriteLine(e.ToString)
+                        errorwriter.Close()
+                    End Using
+                End Try
+                ' ' ' ' ' ' ' ' ' ' ' '
+                ' End of folsize code '
+                ' ' ' ' ' ' ' ' ' ' ' ' 
+
+                oForm.Close()
+                oForm = Nothing
+            Else
+                folsize()
+            End If
             'Remove the lock
             areWeRunning = False
         Catch e As System.Exception
-            'DEBUG code
-            MsgBox(e.ToString)
-            MsgBox("The error was in the startup event handler")
             areWeRunning = False
+            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                errorwriter.WriteLine(e.ToString)
+                errorwriter.Close()
+            End Using
         End Try
     End Sub
 
