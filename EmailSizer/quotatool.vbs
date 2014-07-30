@@ -76,6 +76,4 @@ objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins
 
 
 ' Open Outlook again
-MsgBox("The Quota Tool addin has been installed.")
 objWshShell.Run "Outlook"
-'objWshShell.Run "start " & Chr(34) & "C:\Program Files (x86)\Microsoft Office\Office14\OUTLOOK.EXE" & Chr(34), 0
