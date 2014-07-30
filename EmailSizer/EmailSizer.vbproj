@@ -269,6 +269,9 @@
   <ItemGroup>
     <None Include="Resources\red.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="quotatool.vbs" />
+  </ItemGroup>
   <!-- Include the build rules for a Visual Basic project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- Include additional build rules for an Office application add-in. -->
