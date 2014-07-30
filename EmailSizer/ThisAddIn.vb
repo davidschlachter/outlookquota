@@ -24,82 +24,12 @@ Public Class ThisAddIn
     Public Shared allFolders As Integer
     Public Shared atFolderCount As Integer
     Public Shared currentFolder As String
+    Public Shared theMessage As String
     'The default data path (AppData\EmailSizer)
     Public Shared RootPath As String = Environ("AppData") & "\EmailSizer"
 
-    ' This function loops through all folders and calculates the total size of the root-level mailbox
-    Public Sub folsize()
-        'If this fails, stop, and let go of the lock  :)
-        Try
-            'Lock-file style variable: if it's one, don't execute; when we finish, set to 0; if we fail, set to 0.
-            areWeRunning = True
 
-            ' CAUTION: What about non-MailItem items???
-            Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
-            inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
-
-            ' Check if the cache directory exists
-            If Dir(RootPath, vbDirectory) = "" Then
-                MkDir(RootPath)
-                MsgBox("We'll be calculating the size of your inbox for the first time. This may take a few minutes.")
-            End If
-
-            ' Zero the size variables (just in case  :)
-            a = 0
-            s = 0
-            Dim b As Long = 0
-
-            ' Get the total number of root-level folders
-            allFolders = inb.Folders.Count
-
-            ' Check for any items at the root (unlikely)
-
-            For Each m In inb.Items
-                Try
-                    a = a + m.Size
-                Catch e As System.Exception
-                    Try
-                        Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                            errorwriter.WriteLine(e.ToString)
-                            errorwriter.Close()
-                        End Using
-                    Catch exc As System.Exception
-                        MsgBox("Unable to write error log: " & exc.ToString)
-                    End Try
-                Finally
-                    Marshal.ReleaseComObject(m)
-                End Try
-            Next
-
-            ' Now, loop through all the folders
-            For Each f In inb.Folders
-                itmsiz(f)
-            Next
-
-            'Compute the results
-            NumberUsage = (a + s) / 1000000.0#
-            PercentageQuota = ((a + s) / Quota) * 100
-            RawSize = (a + s)
-            a = 0
-            s = 0
-
-            'Let go of the lock
-            areWeRunning = False
-
-        Catch e As System.Exception
-            'On error...
-            areWeRunning = False
-            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                errorwriter.WriteLine(e.ToString)
-                errorwriter.Close()
-            End Using
-        End Try
-    End Sub
-
-
-
-
-    ' This function searches through subfolders (part of folsize)
+    ' This function searches through subfolders
     Public Sub itmsiz(ByVal fol As Object)
         Try
             Dim f As Object, count As Integer, firstItem As String, size As Long, b As Long
@@ -332,90 +262,96 @@ Public Class ThisAddIn
     End Sub
 
 
-
-
-
-
-
     'Run on start  :)
     Private Sub ThisAddIn_Startup() Handles Me.Startup
         Try
             'At start, make sure we don't have the lock
             areWeRunning = False
 
-            'Try with progress bar for first run
-            If Dir(RootPath, vbDirectory) = "" Then
-                MkDir(RootPath)
-                Dim oForm As FirstRunProgress
-                oForm = New FirstRunProgress
+            Dim oForm As FirstRunProgress
+            oForm = New FirstRunProgress
 
+            Try
+                ' Set the lock variable (now unnecessary because we only run at start)
+                areWeRunning = True
 
-                ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
-                ' Here we're pasting the folsize code, and modifiying it to update the item count while it runs '
-                ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
-                Try
-                    areWeRunning = True
-                    Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
-                    inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
-                    If Dir(RootPath, vbDirectory) = "" Then
+                ' Set up the objects and variables
+                Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
+                inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
+
+                ' Create the cache folder if it doesn't exist
+                If Dir(RootPath, vbDirectory) = "" Then
+                    Try
+                        theMessage = "We'll be calculating the size of your mailbox for the first time. This may take a few minutes."
                         MkDir(RootPath)
-                    End If
-                    a = 0
-                    s = 0
-                    Dim b As Long = 0
-                    allFolders = inb.Folders.Count
-                    oForm.Show()
-                    For Each m In inb.Items
-                        Try
-                            atFolderCount = 1
-                            currentFolder = inb.Name
-                            oForm.Refresh()
-                            a = a + m.Size
-                        Catch e As System.Exception
-                            Try
-                                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                                    errorwriter.WriteLine(e.ToString)
-                                    errorwriter.Close()
-                                End Using
-                            Catch exc As System.Exception
-                                MsgBox("Unable to write error log: " & exc.ToString)
-                            End Try
-                        Finally
-                            Marshal.ReleaseComObject(m)
-                        End Try
-                    Next
+                    Catch ex As System.Exception
+                        Exit Sub
+                    End Try
+                Else
+                    theMessage = "Currently updating your quota usage. This may take a few minutes."
+                End If
+                ' Make sure that the counters are at zero to start
+                a = 0
+                s = 0
+                Dim b As Long = 0
 
-                    For Each f In inb.Folders
-                        currentFolder = f.Name
-                        atFolderCount = atFolderCount + 1
+                ' Update the progress bar with the current folder
+                allFolders = inb.Folders.Count
+                oForm.Show()
+
+                ' Tally the sizes for the root of the mailbox (usually empty)
+                For Each m In inb.Items
+                    Try
+                        atFolderCount = 1
+                        currentFolder = inb.Name
                         oForm.Refresh()
-                        itmsiz(f)
-                    Next
+                        a = a + m.Size
+                    Catch e As System.Exception
+                        Try
+                            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                errorwriter.WriteLine(e.ToString)
+                                errorwriter.Close()
+                            End Using
+                        Catch exc As System.Exception
+                            MsgBox("Unable to write error log: " & exc.ToString)
+                        End Try
+                    Finally
+                        Marshal.ReleaseComObject(m)
+                    End Try
+                Next
 
-                    NumberUsage = (a + s) / 1000000.0#
-                    PercentageQuota = ((a + s) / Quota) * 100
-                    RawSize = (a + s)
-                    a = 0
-                    s = 0
-                    areWeRunning = False
-                Catch e As System.Exception
-                    areWeRunning = False
-                    Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                        errorwriter.WriteLine(e.ToString)
-                        errorwriter.Close()
-                    End Using
-                End Try
-                ' ' ' ' ' ' ' ' ' ' ' '
-                ' End of folsize code '
-                ' ' ' ' ' ' ' ' ' ' ' ' 
+                ' Process all of the subfolders, and keep the progress bar up-to-date
+                For Each f In inb.Folders
+                    currentFolder = f.Name
+                    atFolderCount = atFolderCount + 1
+                    oForm.Refresh()
+                    itmsiz(f)
+                Next
 
-                oForm.Close()
-                oForm = Nothing
-            Else
-                folsize()
-            End If
-            'Remove the lock
-            areWeRunning = False
+                ' The results... (for display in the ribbon)
+                NumberUsage = (a + s) / 1000000.0#
+                PercentageQuota = ((a + s) / Quota) * 100
+                RawSize = (a + s)
+
+                ' Remove the lock
+                areWeRunning = False
+
+            Catch e As System.Exception
+                ' In case of errors, remove the lock
+                areWeRunning = False
+                ' Then log what the error was
+                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                    errorwriter.WriteLine(e.ToString)
+                    errorwriter.Close()
+                End Using
+            End Try
+
+            ' Close the progress bar
+            oForm.Close()
+            oForm = Nothing
+
+                'Remove the lock
+                areWeRunning = False
         Catch e As System.Exception
             areWeRunning = False
             Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
@@ -424,64 +360,6 @@ Public Class ThisAddIn
             End Using
         End Try
     End Sub
-
-    'Update the counts when new mail arrives
-    'Private Sub OutLook_NewMaiItem() Handles Application.NewMail
-    '    Try
-    '        If Not areWeRunning Then
-    '            folsize()
-    '            ribbon.Invalidate()
-    '            areWeRunning = False
-    '        Else
-    '            Exit Sub
-    '        End If
-    '    Catch e As System.Exception
-    '        'DEBUG code
-    '        MsgBox(e.ToString)
-    '        MsgBox("The error was in the new mail event handler")
-    '    End Try
-    'End Sub
-
-    'And, detect when users empty Deleted Items, and also update
-    'Private Sub OutLook_ItemLoad() Handles Application.ItemLoad
-    '    Try
-    '        Dim delitms As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
-    '        delitms = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderDeletedItems)
-    '        If Not areWeRunning Then
-    '            If NumDelItems = delitms.Items.Count Then
-    '                If delitms.Items.Count <> 0 Then
-    '                    If FirstIDDelItems = delitms.Items.Item(1).EntryID Then
-    '                        Exit Sub
-    '                    Else
-    '                        folsize()
-    '                        FirstIDDelItems = delitms.Items.Item(1).EntryID
-    '                        ribbon.Invalidate()
-    '                        areWeRunning = False
-    '                    End If
-    '                Else
-    '                    Exit Sub
-    '                End If
-    '            Else
-    '                folsize()
-    '                NumDelItems = delitms.Items.Count
-    '                If delitms.Items.Count <> 0 Then
-    '                    FirstIDDelItems = delitms.Items.Item(1).EntryID
-    '                End If
-    '                Try
-    '                    ribbon.Invalidate()
-    '                Catch e As System.Exception
-    '                End Try
-    '                areWeRunning = False
-    '            End If
-    '        Else
-    '            Exit Sub
-    '        End If
-    '    Catch e As System.Exception
-    '        'DEBUG code
-    '        MsgBox(e.ToString)
-    '        MsgBox("The error was in the load item handler")
-    '    End Try
-    'End Sub
 
     'Enable the ribbon XML File
     Protected Overrides Function CreateRibbonExtensibilityObject() As Microsoft.Office.Core.IRibbonExtensibility
