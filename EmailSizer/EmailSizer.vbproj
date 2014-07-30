@@ -279,6 +279,7 @@
     <None Include="Resources\red.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="removequotatool.vbs" />
     <Content Include="quotatool.vbs" />
   </ItemGroup>
   <!-- Include the build rules for a Visual Basic project. -->
