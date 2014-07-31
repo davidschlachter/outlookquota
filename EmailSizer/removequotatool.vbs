@@ -24,11 +24,13 @@ Next
 
 
 ' Remove the EmailSizer files
-Dim D, F
-Set D = oFSO.GetFolder(RootPath)
-For Each F In D.Files
-  oFSO.DeleteFile F.path, True
-Next 
+If oFSO.FolderExists(RootPath) Then
+    Dim D, F
+    Set D = oFSO.GetFolder(RootPath)
+    For Each F In D.Files
+        oFSO.DeleteFile F.path, True
+    Next 
+End If
 
 
 ' Remove the registry keys
