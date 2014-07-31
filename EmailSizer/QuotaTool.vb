@@ -4,7 +4,7 @@ Imports Microsoft.Office.Tools.Outlook
 Imports Microsoft.Office.Core
 Imports System.Runtime.InteropServices
 
-Public Class ThisAddIn
+Public Class QuotaTool
     ' Set the file-size counters globally so that they don't reset!
     Public s As Long
     Public a As Long
@@ -18,8 +18,6 @@ Public Class ThisAddIn
     'For evaluating the contents of 'Deleted Items'
     Public Shared FirstIDDelItems As String
     Public Shared NumDelItems As Integer
-    'The 'are-we-running' variable
-    Public Shared areWeRunning As Boolean
     'For the progress bar
     Public Shared allFolders As Integer
     Public Shared atFolderCount As Integer
@@ -29,13 +27,98 @@ Public Class ThisAddIn
     Public Shared RootPath As String = Environ("AppData") & "\EmailSizer"
 
 
+    Private Sub QuotaTool_Startup() Handles Me.Startup
+        Try
+
+            Dim oForm As FirstRunProgress
+            oForm = New FirstRunProgress
+
+            Try
+
+                ' Set up the objects and variables
+                Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
+                inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
+
+                ' Create the cache folder if it doesn't exist
+                If Dir(RootPath, vbDirectory) = "" Then
+                    Try
+                        theMessage = "We'll be calculating the size of your mailbox for the first time. This may take a few minutes."
+                        MkDir(RootPath)
+                    Catch ex As System.Exception
+                        Exit Sub
+                    End Try
+                Else
+                    theMessage = "Currently updating your quota usage. This may take a few minutes."
+                End If
+                ' Make sure that the counters are at zero to start
+                a = 0
+                s = 0
+                Dim b As Long = 0
+
+                ' Update the progress bar with the current folder
+                allFolders = inb.Folders.Count
+                oForm.Show()
+
+                ' Tally the sizes for the root of the mailbox (usually empty)
+                For Each m In inb.Items
+                    Try
+                        atFolderCount = 1
+                        currentFolder = inb.Name
+                        oForm.Refresh()
+                        a = a + m.Size
+                    Catch e As System.Exception
+                        Try
+                            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                                errorwriter.WriteLine(e.ToString)
+                                errorwriter.Close()
+                            End Using
+                        Catch exc As System.Exception
+                            MsgBox("Unable to write error log: " & exc.ToString)
+                        End Try
+                    Finally
+                        Marshal.ReleaseComObject(m)
+                    End Try
+                Next
+
+                ' Process all of the subfolders, and keep the progress bar up-to-date
+                For Each f In inb.Folders
+                    currentFolder = f.Name
+                    atFolderCount = atFolderCount + 1
+                    oForm.Refresh()
+                    itmsiz(f)
+                Next
+
+                ' The results... (for display in the ribbon)
+                NumberUsage = (a + s) / 1000000.0#
+                PercentageQuota = ((a + s) / Quota) * 100
+                RawSize = (a + s)
+
+            Catch e As System.Exception
+                ' Then log what the error was
+                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                    errorwriter.WriteLine(e.ToString)
+                    errorwriter.Close()
+                End Using
+            End Try
+
+            ' Close the progress bar
+            oForm.Close()
+            oForm = Nothing
+
+        Catch e As System.Exception
+            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
+                errorwriter.WriteLine(e.ToString)
+                errorwriter.Close()
+            End Using
+        End Try
+    End Sub
+
+
+
     ' This function searches through subfolders
     Public Sub itmsiz(ByVal fol As Object)
         Try
             Dim f As Object, count As Integer, firstItem As String, size As Long, b As Long
-
-            'Make sure that the variable is set!
-            areWeRunning = True
 
             ' Check for any more subfolders
             For Each f In fol.Folders
@@ -261,105 +344,6 @@ Public Class ThisAddIn
 
     End Sub
 
-
-    'Run on start  :)
-    Private Sub ThisAddIn_Startup() Handles Me.Startup
-        Try
-            'At start, make sure we don't have the lock
-            areWeRunning = False
-
-            Dim oForm As FirstRunProgress
-            oForm = New FirstRunProgress
-
-            Try
-                ' Set the lock variable (now unnecessary because we only run at start)
-                areWeRunning = True
-
-                ' Set up the objects and variables
-                Dim inb As Outlook.MAPIFolder, m As Outlook.MailItem, f As Outlook.MAPIFolder, olApp As Outlook.Application = New Outlook.Application
-                inb = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent
-
-                ' Create the cache folder if it doesn't exist
-                If Dir(RootPath, vbDirectory) = "" Then
-                    Try
-                        theMessage = "We'll be calculating the size of your mailbox for the first time. This may take a few minutes."
-                        MkDir(RootPath)
-                    Catch ex As System.Exception
-                        Exit Sub
-                    End Try
-                Else
-                    theMessage = "Currently updating your quota usage. This may take a few minutes."
-                End If
-                ' Make sure that the counters are at zero to start
-                a = 0
-                s = 0
-                Dim b As Long = 0
-
-                ' Update the progress bar with the current folder
-                allFolders = inb.Folders.Count
-                oForm.Show()
-
-                ' Tally the sizes for the root of the mailbox (usually empty)
-                For Each m In inb.Items
-                    Try
-                        atFolderCount = 1
-                        currentFolder = inb.Name
-                        oForm.Refresh()
-                        a = a + m.Size
-                    Catch e As System.Exception
-                        Try
-                            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                                errorwriter.WriteLine(e.ToString)
-                                errorwriter.Close()
-                            End Using
-                        Catch exc As System.Exception
-                            MsgBox("Unable to write error log: " & exc.ToString)
-                        End Try
-                    Finally
-                        Marshal.ReleaseComObject(m)
-                    End Try
-                Next
-
-                ' Process all of the subfolders, and keep the progress bar up-to-date
-                For Each f In inb.Folders
-                    currentFolder = f.Name
-                    atFolderCount = atFolderCount + 1
-                    oForm.Refresh()
-                    itmsiz(f)
-                Next
-
-                ' The results... (for display in the ribbon)
-                NumberUsage = (a + s) / 1000000.0#
-                PercentageQuota = ((a + s) / Quota) * 100
-                RawSize = (a + s)
-
-                ' Remove the lock
-                areWeRunning = False
-
-            Catch e As System.Exception
-                ' In case of errors, remove the lock
-                areWeRunning = False
-                ' Then log what the error was
-                Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                    errorwriter.WriteLine(e.ToString)
-                    errorwriter.Close()
-                End Using
-            End Try
-
-            ' Close the progress bar
-            oForm.Close()
-            oForm = Nothing
-
-                'Remove the lock
-                areWeRunning = False
-        Catch e As System.Exception
-            areWeRunning = False
-            Using errorwriter As StreamWriter = File.AppendText(RootPath & "\errorlog.txt")
-                errorwriter.WriteLine(e.ToString)
-                errorwriter.Close()
-            End Using
-        End Try
-    End Sub
 
     'Enable the ribbon XML File
     Protected Overrides Function CreateRibbonExtensibilityObject() As Microsoft.Office.Core.IRibbonExtensibility

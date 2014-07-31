@@ -27,26 +27,26 @@ Public Class Ribbon1
     Public Sub Ribbon_Load(ByVal ribbonUI As Office.IRibbonUI)
         Me.ribbon = ribbonUI
         'Via 'Invalidating Ribbon from Outside Ribbon' on MSDN Social...
-        Globals.ThisAddIn.ribbon = Me.ribbon
+        Globals.QuotaTool.ribbon = Me.ribbon
     End Sub
 
 
     'This dynamically updates the button text (and sets a condition for if we haven't sized yet)
     Public Function get_LabelName(ByVal control As Office.IRibbonControl) As String
-        If ThisAddIn.RawSize = 0 Then
+        If QuotaTool.RawSize = 0 Then
             Return "Click me to update!"
         Else
-            Return ThisAddIn.PercentageQuota & " Percent Used"
+            Return QuotaTool.PercentageQuota & " Percent Used"
         End If
     End Function
 
     'This dynamically updates the ribbon image based on the percentage of used quota
     Public Function showthebox(ByVal control As Office.IRibbonControl) As System.Drawing.Bitmap
-        If ThisAddIn.PercentageQuota < 75 Then
+        If QuotaTool.PercentageQuota < 75 Then
             Return My.Resources.Resource1.green
-        ElseIf (ThisAddIn.PercentageQuota >= 75 And ThisAddIn.PercentageQuota < 90) Then
+        ElseIf (QuotaTool.PercentageQuota >= 75 And QuotaTool.PercentageQuota < 90) Then
             Return My.Resources.Resource1.yellow
-        ElseIf ThisAddIn.PercentageQuota >= 90 Then
+        ElseIf QuotaTool.PercentageQuota >= 90 Then
             Return My.Resources.Resource1.red
         Else
             'If all else fails, make the button yellow :)  (alert!)
@@ -57,7 +57,7 @@ Public Class Ribbon1
     'Action on click -- display detailed statistics
     Public Sub clickthebutton(ByVal control As Office.IRibbonControl)
         ribbon.InvalidateControl("QuotaIconButton")
-        MsgBox("Total usage is " & ThisAddIn.NumberUsage & " out of " & ThisAddIn.Quota / 1000000 & " MB, or " & ThisAddIn.PercentageQuota & " %." _
+        MsgBox("Total usage is " & QuotaTool.NumberUsage & " out of " & QuotaTool.Quota / 1000000 & " MB, or " & QuotaTool.PercentageQuota & " %." _
                & vbNewLine & vbNewLine & "(To update this number, close and reopen Outlook. Don't forget to to empty your Deleted Items folder.)")
     End Sub
 
