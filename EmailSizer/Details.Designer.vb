@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class Progress
+Partial Class Details
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,53 +22,45 @@ Partial Class Progress
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
+        Me.SizeLabel = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
-        'ProgressBar1
+        'SizeLabel
         '
-        Me.ProgressBar1.Location = New System.Drawing.Point(31, 103)
-        Me.ProgressBar1.Name = "ProgressBar1"
-        Me.ProgressBar1.Size = New System.Drawing.Size(414, 23)
-        Me.ProgressBar1.TabIndex = 0
+        Me.SizeLabel.AutoSize = True
+        Me.SizeLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.SizeLabel.Location = New System.Drawing.Point(23, 24)
+        Me.SizeLabel.Name = "SizeLabel"
+        Me.SizeLabel.Size = New System.Drawing.Size(305, 24)
+        Me.SizeLabel.TabIndex = 0
+        Me.SizeLabel.Text = "Total usage is x out of y MB, or z %."
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(28, 18)
+        Me.Label1.Location = New System.Drawing.Point(27, 104)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(428, 13)
+        Me.Label1.Size = New System.Drawing.Size(474, 13)
         Me.Label1.TabIndex = 1
-        Me.Label1.Text = "We'll be calculating the size of your mailbox for the first time. This may take a" & _
-            " few minutes."
+        Me.Label1.Text = "(To update this number, close and reopen Outlook. Don't forget to empty your Dele" & _
+            "ted Items folder.)"
         '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(28, 85)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(0, 13)
-        Me.Label2.TabIndex = 2
-        '
-        'Progress
+        'Details
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(480, 155)
-        Me.Controls.Add(Me.Label2)
+        Me.ClientSize = New System.Drawing.Size(538, 160)
         Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.ProgressBar1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
-        Me.Name = "Progress"
+        Me.Controls.Add(Me.SizeLabel)
+        Me.Name = "Details"
+        Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Email Quota Tool"
+        Me.Text = "Quota Tool"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
+    Friend WithEvents SizeLabel As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents Label2 As System.Windows.Forms.Label
 End Class

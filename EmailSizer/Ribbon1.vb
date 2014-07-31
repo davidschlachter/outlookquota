@@ -57,8 +57,8 @@ Public Class Ribbon1
     'Action on click -- display detailed statistics
     Public Sub clickthebutton(ByVal control As Office.IRibbonControl)
         ribbon.InvalidateControl("QuotaIconButton")
-        MsgBox("Total usage is " & QuotaTool.NumberUsage & " out of " & QuotaTool.Quota / 1000000 & " MB, or " & QuotaTool.PercentageQuota & " %." _
-               & vbNewLine & vbNewLine & "(To update this number, close and reopen Outlook. Don't forget to to empty your Deleted Items folder.)")
+        Dim detailsBox As New Details
+        detailsBox.Show()
     End Sub
 
 #End Region

@@ -230,6 +230,12 @@
   -->
   <ItemGroup>
     <AppDesigner Include="My Project\" />
+    <Compile Include="Details.Designer.vb">
+      <DependentUpon>Details.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Details.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Progress.Designer.vb">
       <DependentUpon>Progress.vb</DependentUpon>
     </Compile>
@@ -253,6 +259,9 @@
       <DependentUpon>QuotaTool.Designer.xml</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <EmbeddedResource Include="Details.resx">
+      <DependentUpon>Details.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Progress.resx">
       <DependentUpon>Progress.vb</DependentUpon>
     </EmbeddedResource>
