@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EmailSizer", "EmailSizer\EmailSizer.vbproj", "{49990D4C-CAF0-431D-9DE6-3CB2FFF1C65C}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "QuotaTool", "EmailSizer\QuotaTool.vbproj", "{49990D4C-CAF0-431D-9DE6-3CB2FFF1C65C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

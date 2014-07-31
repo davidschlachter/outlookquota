@@ -24,15 +24,28 @@
     <ProjectGuid>{49990D4C-CAF0-431D-9DE6-3CB2FFF1C65C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>EmailSizer</RootNamespace>
-    <AssemblyName>EmailSizer</AssemblyName>
-    <LoadBehavior>3</LoadBehavior>
+    <AssemblyName>QuotaTool</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <DefineConstants>VSTO40</DefineConstants>
     <StartupObject>
     </StartupObject>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <InstallUrl />
+    <TargetCulture>en</TargetCulture>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <ProductName>QuotaTool</ProductName>
+    <PublisherName />
+    <SupportUrl />
+    <FriendlyName>QuotaTool</FriendlyName>
+    <OfficeApplicationDescription />
+    <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -40,9 +53,14 @@
       <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
-      <Visible>false</Visible>
-      <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
@@ -85,7 +103,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>EmailSizer.xml</DocumentationFile>
+    <DocumentationFile>QuotaTool.xml</DocumentationFile>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
@@ -114,7 +132,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>EmailSizer.xml</DocumentationFile>
+    <DocumentationFile>QuotaTool.xml</DocumentationFile>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
@@ -224,15 +242,15 @@
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
     <Compile Include="Ribbon1.vb" />
-    <Compile Include="ThisAddIn.vb">
+    <Compile Include="QuotaTool.vb">
       <SubType>Code</SubType>
     </Compile>
     <None Include="EmailSizer_TemporaryKey.pfx" />
-    <None Include="ThisAddIn.Designer.xml">
-      <DependentUpon>ThisAddIn.vb</DependentUpon>
+    <None Include="QuotaTool.Designer.xml">
+      <DependentUpon>QuotaTool.vb</DependentUpon>
     </None>
-    <Compile Include="ThisAddIn.Designer.vb">
-      <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
+    <Compile Include="QuotaTool.Designer.vb">
+      <DependentUpon>QuotaTool.Designer.xml</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <EmbeddedResource Include="FirstRunProgress.resx">
@@ -292,7 +310,7 @@
       <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
         <ProjectProperties HostName="Outlook" HostPackage="{20A848B8-E01F-4801-962E-25DB0FF57389}" OfficeVersion="14.0" VstxVersion="4.0" ApplicationType="Outlook" Language="vb" TemplatesPath="" DebugInfoExeName="#Software\Microsoft\Office\14.0\Outlook\InstallRoot\Path#outlook.exe" AddItemTemplatesGuid="{5D898164-AEB5-470F-97BA-9253F022FD71}" />
         <Host Name="Outlook" IconIndex="0">
-          <HostItem Name="ThisAddIn" Code="ThisAddIn.vb" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.vb" />
+          <HostItem Name="ThisAddIn" Code="QuotaTool.vb" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="QuotaTool.Designer.xml" GeneratedCode="QuotaTool.Designer.vb" />
         </Host>
       </FlavorProperties>
     </VisualStudio>
