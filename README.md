@@ -3,7 +3,7 @@ Outlook Quota Tool
 
 Outlook Addin showing quota usage in the ribbon.
 
-Designed for the [Email Transformation Initiative](http://www.ssc-spc.gc.ca/pages/mlobj-crrlobj-eng.html) — default quota value is 2 GB. The quota usage is displayed clearly in the ribbon and is intended to ease the transition and support the new system.
+Designed for the Email Transformation Initiative — default quota value is 2 GB. The quota usage is displayed clearly in the ribbon and is intended to ease the transition and support the new system.
 
 The links below allow for quick add/remove from Outlook. Click, then 'Run' or 'Open' when prompted:
 
