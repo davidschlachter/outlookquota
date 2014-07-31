@@ -166,6 +166,7 @@ Public Class QuotaTool
         For Each m In fol.Items
             Try
                 b += m.size
+                'Necessary because encrypted messages cause exceptions -- Outlook can't determine their size
             Catch e As System.Exception
                 writeErrorLog(e)
             Finally
