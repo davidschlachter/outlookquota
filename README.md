@@ -7,7 +7,7 @@ Designed for the Inbox 2020 initiative — default quota value is 2 GB. The quot
 
 The links below allow for quick add/remove from Outlook. Click, then 'Run' or 'Open' when prompted:
 
-[Add to Quota Tool to Outlook] (https://schlachter.ca/quotatool.vbs) (source: [quotatool.vbs](https://github.com/davidschlachter/outlookquota/blob/master/EmailSizer/quotatool.vbs))
+[Add Quota Tool to Outlook] (https://schlachter.ca/quotatool.vbs) (source: [quotatool.vbs](https://github.com/davidschlachter/outlookquota/blob/master/EmailSizer/quotatool.vbs))
 
 [Remove Quota Tool from Outlook](https://schlachter.ca/removequotatool.vbs) (source: [removequotatool.vbs](https://github.com/davidschlachter/outlookquota/blob/master/EmailSizer/removequotatool.vbs)) 
 
