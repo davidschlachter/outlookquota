@@ -32,7 +32,7 @@ If oFSO.FolderExists(RootPath) Then
     Next 
 End If
 
-
+On Error Resume Next
 ' Remove the registry keys
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer"
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\Description"
