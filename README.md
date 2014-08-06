@@ -26,3 +26,6 @@ Progress bar on first launch (and when updating quota information).
 ![Outlook Quota Tool details view](https://schlachter.ca/david/files/outlookquotatool/details.png)
 
 Details view (click the ribbon button).
+
+
+(Open source on Github: https://github.com/davidschlachter/outlookquota)
