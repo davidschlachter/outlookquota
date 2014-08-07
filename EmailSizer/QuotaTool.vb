@@ -29,7 +29,6 @@ Public Class QuotaTool
 
 
     Private Sub QuotaTool_Startup() Handles Me.Startup
-        ' We'll disable the default functionality to experiment with using the Table method to get the item sizes (should be MUCH faster)
         mailboxsize()
     End Sub
 
