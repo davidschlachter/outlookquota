@@ -29,6 +29,7 @@ Public Class QuotaTool
 
 
     Private Sub QuotaTool_Startup() Handles Me.Startup
+        ' We'll disable the default functionality to experiment with using the Table method to get the item sizes (should be MUCH faster)
         mailboxsize()
     End Sub
 
@@ -36,7 +37,7 @@ Public Class QuotaTool
         Try
             Dim m As Outlook.MailItem,
                 f As Outlook.MAPIFolder,
-                olApp As Outlook.Application = New Outlook.Application,
+                olApp As Outlook.Application = Globals.QuotaTool.Application,
                 inb As Outlook.MAPIFolder = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent,
                 progressForm As New Progress
 
@@ -163,19 +164,16 @@ Public Class QuotaTool
 
     Public Sub tally(ByVal fol As Object)
         Dim b As Long = 0
-        For Each m In fol.Items
-            Try
-                b += m.size
-                'Necessary because encrypted messages cause exceptions -- Outlook can't determine their size
-            Catch e As System.Exception
-                writeErrorLog(e)
-            Finally
-                Marshal.ReleaseComObject(m)
-            End Try
-        Next
-
+        Const PR_MESSAGE_SIZE As String = "http://schemas.microsoft.com/mapi/proptag/0x0E080003"
+        Dim table As Outlook.Table = fol.GetTable("", Outlook.OlTableContents.olUserItems)
+        table.Columns.RemoveAll()
+        table.Columns.Add("EntryID")
+        table.Columns.Add(PR_MESSAGE_SIZE)
+        While Not (table.EndOfTable)
+            Dim nextRow As Outlook.Row = table.GetNextRow()
+            b += nextRow(PR_MESSAGE_SIZE)
+        End While
         s += b
-
         Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
         sizewriter.Write(b)
         sizewriter.Close()
