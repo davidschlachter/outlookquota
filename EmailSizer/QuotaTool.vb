@@ -170,7 +170,11 @@ Public Class QuotaTool
         table.Columns.Add(PR_MESSAGE_SIZE)
         While Not (table.EndOfTable)
             Dim nextRow As Outlook.Row = table.GetNextRow()
-            b += nextRow(PR_MESSAGE_SIZE)
+            Try
+                b += nextRow(PR_MESSAGE_SIZE)
+            Catch e As System.Exception
+                writeErrorLog(e)
+            End Try
         End While
         s += b
         Dim sizewriter As New StreamWriter(ItemFolder & "\Size")
