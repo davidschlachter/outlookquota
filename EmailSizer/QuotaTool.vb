@@ -7,6 +7,7 @@ Imports System.Runtime.InteropServices
 Public Class QuotaTool
     Public s As Long
     Public a As Long
+    Public ItemFolder As String
     'Permit ribbon manipulation
     Public ribbon As Office.IRibbonUI
     'The quota in bytes (and other quota variables that the ribbon will need for display)
@@ -15,7 +16,6 @@ Public Class QuotaTool
     Public Shared PercentageQuota As Integer
     Public Shared RawSize As Long
     'For the progress bar
-    Public ItemFolder As String
     Public Shared allFolders As Integer
     Public Shared atFolder As Integer
     Public Shared currentFolder As String
@@ -70,7 +70,7 @@ Public Class QuotaTool
             ' Process all of the subfolders, and keep the progress bar up-to-date
             For Each f In mailroot.Folders
                 currentFolder = f.Name
-                atFolder = atFolder + 1
+                atFolder += 1
                 progressForm.Refresh()
                 itemsize(f)
             Next
@@ -137,7 +137,7 @@ Public Class QuotaTool
                                 Dim sizereader As New System.IO.StreamReader(ItemFolder & "\Size")
                                 size = sizereader.ReadLine()
                                 sizereader.Close()
-                                s = s + size
+                                s += size
                             Catch ex As System.Exception
                                 tally(fol)
                             End Try
@@ -162,7 +162,6 @@ Public Class QuotaTool
         Const PR_MESSAGE_SIZE As String = "http://schemas.microsoft.com/mapi/proptag/0x0E080003"
         Dim table As Outlook.Table = fol.GetTable("", Outlook.OlTableContents.olUserItems)
         table.Columns.RemoveAll()
-        table.Columns.Add("EntryID")
         table.Columns.Add(PR_MESSAGE_SIZE)
         While Not (table.EndOfTable)
             Dim nextRow As Outlook.Row = table.GetNextRow()
