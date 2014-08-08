@@ -5,10 +5,8 @@ Imports Microsoft.Office.Core
 Imports System.Runtime.InteropServices
 
 Public Class QuotaTool
-    ' Set the file-size counters globally so that they don't reset!
     Public s As Long
     Public a As Long
-    Public ItemFolder As String
     'Permit ribbon manipulation
     Public ribbon As Office.IRibbonUI
     'The quota in bytes (and other quota variables that the ribbon will need for display)
@@ -16,10 +14,8 @@ Public Class QuotaTool
     Public Shared NumberUsage As Integer
     Public Shared PercentageQuota As Integer
     Public Shared RawSize As Long
-    'For evaluating the contents of 'Deleted Items'
-    Public Shared FirstIDDelItems As String
-    Public Shared NumDelItems As Integer
     'For the progress bar
+    Public ItemFolder As String
     Public Shared allFolders As Integer
     Public Shared atFolder As Integer
     Public Shared currentFolder As String
