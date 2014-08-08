@@ -33,7 +33,7 @@ Public Class QuotaTool
             Dim m As Outlook.MailItem,
                 f As Outlook.MAPIFolder,
                 olApp As Outlook.Application = Globals.QuotaTool.Application,
-                inb As Outlook.MAPIFolder = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent,
+                mailroot As Outlook.MAPIFolder = olApp.GetNamespace("mapi").GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent,
                 progressForm As New Progress
 
             ' Create the cache folder if it doesn't exist
@@ -50,14 +50,14 @@ Public Class QuotaTool
             End If
 
             ' Update the progress bar with the current folder
-            allFolders = inb.Folders.Count
+            allFolders = mailroot.Folders.Count
             progressForm.Show()
 
             ' Tally the sizes for the root of the mailbox (usually empty)
-            For Each m In inb.Items
+            For Each m In mailroot.Items
                 Try
                     atFolder = 1
-                    currentFolder = inb.Name
+                    currentFolder = mailroot.Name
                     progressForm.Refresh()
                     a += m.Size
                 Catch e As System.Exception
@@ -68,7 +68,7 @@ Public Class QuotaTool
             Next
 
             ' Process all of the subfolders, and keep the progress bar up-to-date
-            For Each f In inb.Folders
+            For Each f In mailroot.Folders
                 currentFolder = f.Name
                 atFolder = atFolder + 1
                 progressForm.Refresh()
