@@ -22,11 +22,54 @@ Public Class QuotaTool
     Public Shared theMessage As String
     'The default data path (AppData\EmailSizer)
     Public Shared RootPath As String = Environ("AppData") & "\EmailSizer"
+    'Code for Outlook 2007 button
+    Dim quotaToolBar As Office.CommandBar
+    Dim quotaButton As Office.CommandBarButton
+    Dim selectExplorers As Outlook.Explorers
 
 
     Private Sub QuotaTool_Startup() Handles Me.Startup
         mailboxsize()
+        'Code to initialize toolbar
+        selectExplorers = Me.Application.Explorers()
+        AddHandler selectExplorers.NewExplorer, AddressOf Me.NewExplorer_Event
+        AddToolbar()
     End Sub
+
+    Private Sub NewExplorer_Event(ByVal new_Explorer As Outlook.Explorer)
+        new_Explorer.Activate()
+        quotaToolBar = Nothing
+        Call Me.AddToolbar()
+    End Sub
+
+    Private Sub AddToolbar()
+        Dim button_1 As Office.CommandBarButton
+        If quotaToolBar Is Nothing Then
+            Dim cmdBars As Office.CommandBars = Me.Application.ActiveExplorer().CommandBars
+            quotaToolBar = cmdBars.Add("NewToolBar", Office.MsoBarPosition.msoBarTop, False, True)
+        End If
+        Try
+            button_1 = CType(quotaToolBar.Controls.Add(1), Office.CommandBarButton)
+            With button_1
+                .Style = Office.MsoButtonStyle.msoButtonCaption
+                .Caption = QuotaTool.PercentageQuota & "% of Quota in Use"
+                .Tag = "Button 1"
+            End With
+            If Me.quotaButton Is Nothing Then
+                Me.quotaButton = button_1
+                AddHandler quotaButton.Click, AddressOf ButtonClick
+            End If
+            quotaToolBar.Visible = True
+        Catch e As System.Exception
+            writeErrorLog(e)
+        End Try
+    End Sub
+
+    Private Sub ButtonClick(ByVal ctrl As Office.CommandBarButton, ByRef cancel As Boolean)
+        Dim detailsForm As New Details
+        detailsForm.Show()
+    End Sub
+
 
     Public Sub mailboxsize()
         Try
