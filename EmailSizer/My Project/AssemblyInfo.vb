@@ -9,11 +9,11 @@ Imports System.Security
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("EmailSizer")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Microsoft")> 
-<Assembly: AssemblyProduct("EmailSizer")> 
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2014")> 
+<Assembly: AssemblyTitle("Outlook Quota Tool")> 
+<Assembly: AssemblyDescription("Shows quota usage in Outlook")> 
+<Assembly: AssemblyCompany("David Schlachter")> 
+<Assembly: AssemblyProduct("QuotaTool")> 
+<Assembly: AssemblyCopyright("Copyright © David Schlachter 2014")> 
 <Assembly: AssemblyTrademark("")> 
 
 ' Setting ComVisible to false makes the types in this assembly not visible 
