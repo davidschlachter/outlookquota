@@ -68,7 +68,7 @@ End Sub
 
 
 ' Create the registry keys
-objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer", ""
+objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\", ""
 objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\Description", "Shows quota usage", "REG_SZ"
 objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\FriendlyName", "Quota Tool", "REG_SZ"
 objWshShell.RegWrite "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\LoadBehavior", 3, "REG_DWORD"

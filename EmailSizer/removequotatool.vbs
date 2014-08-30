@@ -39,6 +39,7 @@ objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addin
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\FriendlyName"
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\LoadBehavior"
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\Manifest"
+objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\Office\Outlook\Addins\EmailSizer\"
 objWshShell.RegDelete "HKEY_CURRENT_USER\Software\Microsoft\VSTA\Solutions\29ec26ae-4c91-439c-b860-80c7cf48fb96\"
 
 
