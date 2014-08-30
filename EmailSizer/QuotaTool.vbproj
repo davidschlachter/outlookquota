@@ -308,6 +308,9 @@
   <ItemGroup>
     <Content Include="removequotatool.vbs" />
     <Content Include="quotatool.vbs" />
+    <None Include="Resources\green_small.png" />
+    <None Include="Resources\yellow_small.png" />
+    <None Include="Resources\red_small.png" />
   </ItemGroup>
   <!-- Include the build rules for a Visual Basic project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

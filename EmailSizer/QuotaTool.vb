@@ -3,6 +3,7 @@ Imports Microsoft.Office.Interop.Outlook
 Imports Microsoft.Office.Tools.Outlook
 Imports Microsoft.Office.Core
 Imports System.Runtime.InteropServices
+Imports System.Windows.Forms
 
 Public Class QuotaTool
     Public s As Long
@@ -51,9 +52,11 @@ Public Class QuotaTool
         Try
             button_1 = CType(quotaToolBar.Controls.Add(1), Office.CommandBarButton)
             With button_1
-                .Style = Office.MsoButtonStyle.msoButtonCaption
+                .Style = Office.MsoButtonStyle.msoButtonIconAndCaption
                 .Caption = QuotaTool.PercentageQuota & "% of Quota in Use"
                 .Tag = "PercentUsed"
+                .Picture = AxHostConverter.ImageToPictureDisp(getToolbarImage())
+                '.FaceId = 394
             End With
             If Me.quotaButton Is Nothing Then
                 Me.quotaButton = button_1
@@ -64,6 +67,19 @@ Public Class QuotaTool
             writeErrorLog(e)
         End Try
     End Sub
+
+    Public Function getToolbarImage() As System.Drawing.Bitmap
+        If QuotaTool.PercentageQuota < 75 Then
+            Return My.Resources.Resource1.green_small
+        ElseIf (QuotaTool.PercentageQuota >= 75 And QuotaTool.PercentageQuota < 90) Then
+            Return My.Resources.Resource1.yellow_small
+        ElseIf QuotaTool.PercentageQuota >= 90 Then
+            Return My.Resources.Resource1.red_small
+        Else
+            'If all else fails, make the button yellow :)  (alert!)
+            Return My.Resources.Resource1.yellow_small
+        End If
+    End Function
 
     Private Sub ButtonClick(ByVal ctrl As Office.CommandBarButton, ByRef cancel As Boolean)
         Dim detailsForm As New Details
@@ -245,4 +261,14 @@ Public Class QuotaTool
         Return New Ribbon1()
     End Function
 
+End Class
+
+Friend Class AxHostConverter
+    Inherits AxHost
+    Private Sub New()
+        MyBase.New(String.Empty)
+    End Sub
+    Public Shared Function ImageToPictureDisp(image As Drawing.Image) As stdole.IPictureDisp
+        Return DirectCast(GetIPictureDispFromPicture(image), stdole.IPictureDisp)
+    End Function
 End Class
