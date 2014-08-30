@@ -46,14 +46,14 @@ Public Class QuotaTool
         Dim button_1 As Office.CommandBarButton
         If quotaToolBar Is Nothing Then
             Dim cmdBars As Office.CommandBars = Me.Application.ActiveExplorer().CommandBars
-            quotaToolBar = cmdBars.Add("NewToolBar", Office.MsoBarPosition.msoBarTop, False, True)
+            quotaToolBar = cmdBars.Add("QuotaTool", Office.MsoBarPosition.msoBarTop, False, True)
         End If
         Try
             button_1 = CType(quotaToolBar.Controls.Add(1), Office.CommandBarButton)
             With button_1
                 .Style = Office.MsoButtonStyle.msoButtonCaption
                 .Caption = QuotaTool.PercentageQuota & "% of Quota in Use"
-                .Tag = "Button 1"
+                .Tag = "PercentUsed"
             End With
             If Me.quotaButton Is Nothing Then
                 Me.quotaButton = button_1
